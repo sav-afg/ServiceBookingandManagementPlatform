@@ -46,6 +46,6 @@ wwwroot\css\app.css
 wwwroot\icon-192.png
 wwwroot\appsettings.Development.json
 wwwroot\appsettings.json
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\wwwroot\css\app.css
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\wwwroot\appsettings.Development.json
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\wwwroot\appsettings.json
+C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\wwwroot\css\app.css
+C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\wwwroot\appsettings.Development.json
+C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\wwwroot\appsettings.json
