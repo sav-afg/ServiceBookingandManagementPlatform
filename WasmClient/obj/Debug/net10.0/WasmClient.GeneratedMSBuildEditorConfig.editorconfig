@@ -44,6 +44,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/s_hak/Documents/Visual Studio 2026/Portfolio Projects/ServiceBookingandManagementPlatform/WasmClient/Pages/AddBooking.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkQm9va2luZy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/s_hak/Documents/Visual Studio 2026/Portfolio Projects/ServiceBookingandManagementPlatform/WasmClient/Pages/AddService.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkU2VydmljZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/s_hak/Documents/Visual Studio 2026/Portfolio Projects/ServiceBookingandManagementPlatform/WasmClient/Pages/Bookings.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQm9va2luZ3MucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

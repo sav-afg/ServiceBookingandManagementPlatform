@@ -1,0 +1,225 @@
+@page "/services/add"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+@using ServiceBookingPlatform.Models.Dtos.Service
+@using WasmClient.Api
+@inject IUserServiceApiClient ServiceClient
+@inject NavigationManager Navigation
+
+<PageTitle>Add New Service - Service Booking Platform</PageTitle>
+
+<div class="page-content">
+    <div class="container">
+        <div class="page-header">
+            <h3>
+                <i class="bi bi-plus-circle me-2"></i>
+                Create New Service
+            </h3>
+            <p class="text-muted mb-0">Add a new service to the platform</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-gear-fill me-2"></i>
+                            Service Details
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                @errorMessage
+                                <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(successMessage))
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                @successMessage
+                                <button type="button" class="btn-close" @onclick="@(() => successMessage = null)"></button>
+                            </div>
+                        }
+
+                        <EditForm Model="@formModel" OnValidSubmit="@HandleSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="alert alert-warning" />
+
+                            <div class="mb-3">
+                                <label for="serviceName" class="form-label">
+                                    <i class="bi bi-tag me-1"></i>
+                                    Service Name *
+                                </label>
+                                <InputText id="serviceName" class="form-control" @bind-Value="formModel.ServiceName" placeholder="Enter service name" />
+                                <ValidationMessage For="@(() => formModel.ServiceName)" />
+                                <small class="form-text text-muted">2-100 characters required</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="serviceType" class="form-label">
+                                    <i class="bi bi-diagram-3 me-1"></i>
+                                    Service Type *
+                                </label>
+                                <InputText id="serviceType" class="form-control" @bind-Value="formModel.ServiceType" placeholder="Enter service type" />
+                                <ValidationMessage For="@(() => formModel.ServiceType)" />
+                                <small class="form-text text-muted">2-50 characters required (e.g., Consultation, Maintenance, Repair)</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="serviceDescription" class="form-label">
+                                    <i class="bi bi-card-text me-1"></i>
+                                    Service Description
+                                </label>
+                                <InputTextArea id="serviceDescription" class="form-control" rows="4" @bind-Value="formModel.ServiceDescription" placeholder="Enter a detailed description of the service (optional)" />
+                                <ValidationMessage For="@(() => formModel.ServiceDescription)" />
+                                <small class="form-text text-muted">Maximum 500 characters (optional)</small>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                <strong>Admin Only:</strong> This page is only accessible to administrators. Services you create will be available for booking by all users.
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn btn-outline-secondary" @onclick="Cancel">
+                                    <i class="bi bi-x-circle me-2"></i>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                                    @if (isSubmitting)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        <span>Creating...</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        <span>Create Service</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="card bg-light border-0">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-lightbulb-fill text-warning me-2"></i>
+                                Tips for Creating Services
+                            </h6>
+                            <ul class="mb-0 small">
+                                <li>Use clear, descriptive names that users can easily understand</li>
+                                <li>Keep service types consistent for better organization</li>
+                                <li>Provide detailed descriptions to help users make informed decisions</li>
+                                <li>Consider grouping similar services under the same service type</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ServiceFormModel formModel = new ServiceFormModel
+    {
+        ServiceName = "",
+        ServiceType = "",
+        ServiceDescription = ""
+    };
+
+    private string? errorMessage;
+    private string? successMessage;
+    private bool isSubmitting = false;
+
+    private async Task HandleSubmit()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+        successMessage = null;
+
+        try
+        {
+            // Create the DTO from form model
+            var createServiceDto = new CreateServiceDto
+            {
+                ServiceName = formModel.ServiceName,
+                ServiceType = formModel.ServiceType,
+                ServiceDescription = formModel.ServiceDescription ?? ""
+            };
+
+            var result = await ServiceClient.CreateServiceAsync(createServiceDto);
+            
+            if (result != null)
+            {
+                successMessage = "Service created successfully!";
+                
+                // Wait a moment to show success message, then navigate to services page
+                await Task.Delay(1500);
+                Navigation.NavigateTo("/services");
+            }
+            else
+            {
+                errorMessage = "Failed to create service. Please try again.";
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // Check if it's an authorization error (403)
+            if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                errorMessage = "Access denied. You must be an administrator to create services.";
+            }
+            else if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                errorMessage = "You are not authorized. Please log in and try again.";
+            }
+            else
+            {
+                errorMessage = "Network error occurred. Please check your connection and try again.";
+            }
+            Console.WriteLine($"Error creating service: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An unexpected error occurred. Please try again.";
+            Console.WriteLine($"Error creating service: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/services");
+    }
+
+    // Mutable form model for data binding
+    private class ServiceFormModel
+    {
+        [Required(ErrorMessage = "Service name is required")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Service name must be between 2 and 100 characters")]
+        public string ServiceName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Service type is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Service type must be between 2 and 50 characters")]
+        public string ServiceType { get; set; } = string.Empty;
+
+        [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
+        public string? ServiceDescription { get; set; } = string.Empty;
+    }
+}

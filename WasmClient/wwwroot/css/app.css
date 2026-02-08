@@ -412,6 +412,45 @@ code {
     color: #c02d76;
 }
 
+/* Form Page Enhancements */
+.form-control-plaintext,
+.form-control,
+.form-select {
+    transition: all 0.3s ease;
+}
+
+.form-control:hover:not(:focus),
+.form-select:hover:not(:focus) {
+    border-color: var(--primary-color);
+}
+
+/* Add Booking/Service Page Styles */
+.card-header h5 {
+    font-weight: 600;
+    color: white;
+}
+
+.form-text {
+    font-size: 0.875rem;
+}
+
+/* Required field indicator */
+.form-label::after {
+    content: "";
+}
+
+.form-label:has(+ input[required])::before,
+.form-label:has(+ select[required])::before,
+.form-label:has(+ textarea[required])::before {
+    content: "* ";
+    color: var(--danger-color);
+}
+
+/* Tips card styling */
+.bg-light.border-0 {
+    background-color: #f8f9fa !important;
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;

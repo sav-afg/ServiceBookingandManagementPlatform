@@ -1,7 +1,10 @@
 @page "/services"
+@using Microsoft.AspNetCore.Components.Authorization
 @using ServiceBookingPlatform.Models.Dtos.Service
 @using WasmClient.Api
 @inject IUserServiceApiClient ServiceClient
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Services - Service Booking Platform</PageTitle>
 
