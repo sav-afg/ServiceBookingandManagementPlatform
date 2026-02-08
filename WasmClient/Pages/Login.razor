@@ -1,0 +1,121 @@
+@page "/login"
+@using ServiceBookingPlatform.Models.Dtos.User
+@using WasmClient.Api
+@using WasmClient.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IUserLogInApiClient LoginClient
+@inject ITokenService TokenService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Login - Service Booking Platform</PageTitle>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="card shadow-lg">
+            <div class="login-header">
+                <i class="bi bi-shield-lock-fill" style="font-size: 3rem;"></i>
+                <h3 class="mt-3">Welcome Back!</h3>
+                <p class="mb-0">Sign in to manage your bookings</p>
+            </div>
+            <div class="login-body">
+                <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    
+                    <div class="mb-4">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope-fill me-2"></i>Email Address
+                        </label>
+                        <InputText id="email" 
+                                   @bind-Value="loginModel.Email" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Enter your email" 
+                                   autocomplete="email" />
+                        <ValidationMessage For="@(() => loginModel.Email)" class="text-danger small mt-1" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock-fill me-2"></i>Password
+                        </label>
+                        <InputText id="password" 
+                                   @bind-Value="loginModel.Password" 
+                                   type="password" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Enter your password" 
+                                   autocomplete="current-password" />
+                        <ValidationMessage For="@(() => loginModel.Password)" class="text-danger small mt-1" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <span>Signing in...</span>
+                        }
+                        else
+                        {
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+                            <span>Sign In</span>
+                        }
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <div>@errorMessage</div>
+                        </div>
+                    }
+                </EditForm>
+
+                <hr class="my-4" />
+
+                <div class="text-center text-muted">
+                    <small>
+                        <i class="bi bi-info-circle me-1"></i>
+                        Don't have an account? Contact your administrator
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private UserLogInRequestDto loginModel = new();
+    private string? errorMessage;
+    private bool isLoading = false;
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            var response = await LoginClient.LoginAsync(loginModel);
+
+            await TokenService.SetTokensAsync(response.AccessToken, response.RefreshToken);
+
+            ((CustomAuthStateProvider)AuthStateProvider).NotifyAuthenticationStateChanged();
+
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = "Login failed. Please check your credentials and try again.";
+            Console.WriteLine($"Login error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An unexpected error occurred. Please try again.";
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
+
