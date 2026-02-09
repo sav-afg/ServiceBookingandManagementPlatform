@@ -43,7 +43,22 @@ namespace WasmClient.Services
             var jsonBytes = ParseBase64WithoutPadding(payload);
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            return keyValuePairs!.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()!));
+            var claims = new List<Claim>();
+
+            foreach (var kvp in keyValuePairs!)
+            {
+                // Map the role claim to the standard claim type that Blazor expects
+                if (kvp.Key == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, kvp.Value.ToString()!));
+                }
+                else
+                {
+                    claims.Add(new Claim(kvp.Key, kvp.Value.ToString()!));
+                }
+            }
+
+            return claims;
         }
 
         private static byte[] ParseBase64WithoutPadding(string base64)

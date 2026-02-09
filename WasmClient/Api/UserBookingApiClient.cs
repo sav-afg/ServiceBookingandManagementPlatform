@@ -16,7 +16,7 @@ namespace WasmClient.Api
         : ApiClientBase(httpClient, logger), IUserBookingApiClient
     {
         public async Task<List<BookingDto>> GetAllBookingsAsync()
-            => await GetAsync<List<BookingDto>>("api/userbooking") ?? new List<BookingDto>();
+            => await GetAsync<List<BookingDto>>("api/userbooking") ?? [];
 
         public async Task<BookingDto?> GetBookingByIdAsync(int id)
             => await GetAsync<BookingDto>($"api/userbooking/{id}");

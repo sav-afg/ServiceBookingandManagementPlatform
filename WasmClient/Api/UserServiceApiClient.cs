@@ -16,7 +16,7 @@ namespace WasmClient.Api
         : ApiClientBase(httpClient, logger), IUserServiceApiClient
     {
         public async Task<List<ServiceDto>> GetAllServicesAsync()
-            => await GetAsync<List<ServiceDto>>("api/userservice") ?? new List<ServiceDto>();
+            => await GetAsync<List<ServiceDto>>("api/userservice") ?? [];
 
         public async Task<ServiceDto?> GetServiceByIdAsync(int id)
             => await GetAsync<ServiceDto>($"api/userservice/{id}");

@@ -1028,7 +1028,6 @@ C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingand
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\b4so3uyhqc-{0}-ir474ug6zy-ir474ug6zy.gz
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\sr0aa4j07f-{0}-5cl6jzyzps-5cl6jzyzps.gz
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\9q5thj8bgd-{0}-a2c1phmbzv-a2c1phmbzv.gz
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\ld4xhozlpl-{0}-y83d4zd1xe-y83d4zd1xe.gz
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\rbuekgbg4e-{0}-dtm6c9ijlu-dtm6c9ijlu.gz
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\i9x3cyi4k7-{0}-dtm6c9ijlu-dtm6c9ijlu.gz
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\0n2eaqy2g2-{0}-66stpp682q-66stpp682q.gz
@@ -1257,16 +1256,6 @@ C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingand
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\refint\WasmClient.dll
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\WasmClient.pdb
 C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\ref\WasmClient.dll
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.e6ivrjm92m.wasm
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.d2dz15clzo.pdb
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\dotnet.64k7xf4li3.js
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.e6ivrjm92m.wasm.gz
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.d2dz15clzo.pdb.gz
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\dotnet.64k7xf4li3.js.gz
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\mnnwx3c8eh-{0}-e6ivrjm92m-e6ivrjm92m.gz
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\hqh01sryvk-{0}-d2dz15clzo-d2dz15clzo.gz
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\v4e0pft7gv-{0}-64k7xf4li3-64k7xf4li3.gz
-C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\mycjka9eou-{0}-91rgyemhkb-91rgyemhkb.gz
 C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\WasmClient.runtimeconfig.json
 C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\blazor.webassembly.66stpp682q.js
 C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\BootstrapBlazor.fo4w71oqj9.wasm
@@ -2537,3 +2526,15 @@ C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBook
 C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\refint\WasmClient.dll
 C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\WasmClient.pdb
 C:\Users\s_hak\Documents\Visual Studio 2026\C# Projects\ASP.NET CORE\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\ref\WasmClient.dll
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\WasmClient.sourcelink.json
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\ld4xhozlpl-{0}-1az7mycogs-1az7mycogs.gz
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.leu1hgzzrz.wasm
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.1eufx3d768.pdb
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\dotnet.q3ysqip9ex.js
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.leu1hgzzrz.wasm.gz
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\WasmClient.1eufx3d768.pdb.gz
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\bin\Debug\net10.0\wwwroot\_framework\dotnet.q3ysqip9ex.js.gz
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\mnnwx3c8eh-{0}-leu1hgzzrz-leu1hgzzrz.gz
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\hqh01sryvk-{0}-1eufx3d768-1eufx3d768.gz
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\v4e0pft7gv-{0}-q3ysqip9ex-q3ysqip9ex.gz
+C:\Users\s_hak\Documents\Visual Studio 2026\Portfolio Projects\ServiceBookingandManagementPlatform\WasmClient\obj\Debug\net10.0\compressed\mycjka9eou-{0}-4svjgi7ec8-4svjgi7ec8.gz
