@@ -94,6 +94,10 @@
               "version": "[10.0.2, )",
               "autoReferenced": true
             },
+            "OpenTelemetry.Exporter.Console": {
+              "target": "Package",
+              "version": "[1.15.0, )"
+            },
             "bootstrap": {
               "target": "Package",
               "version": "[5.3.8, )"

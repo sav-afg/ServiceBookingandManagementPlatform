@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "WasmClient",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-1uoMWzzjUklQzSlgE0YAECKqJMqOAQyIg43Rg0OZsdg=",
+    "hash": "sha256-5Nh6l8So2jitNdtEW89EEyAGE7QfrN7Tnq3JkUaQkeU=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.87vtjjdetb.js"
@@ -227,6 +227,12 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
         "cache": "force-cache"
       },
       {
+        "virtualPath": "Microsoft.Extensions.Logging.Configuration.wasm",
+        "name": "Microsoft.Extensions.Logging.Configuration.d1d2008rf5.wasm",
+        "integrity": "sha256-ge7tGK/hMoQwnzsrJHs3HYpM5lbjahYlJRuRvjhyOYk=",
+        "cache": "force-cache"
+      },
+      {
         "virtualPath": "Microsoft.Extensions.Options.wasm",
         "name": "Microsoft.Extensions.Options.moch3gvzt4.wasm",
         "integrity": "sha256-di22E4jmM/Bs0XCMaI2qOcHAFPN2C/0JExuM/4nQZHg=",
@@ -260,6 +266,30 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
         "virtualPath": "Microsoft.JSInterop.WebAssembly.wasm",
         "name": "Microsoft.JSInterop.WebAssembly.gpkw9vy0ln.wasm",
         "integrity": "sha256-LCoHxVZxWAeOxp2E4m37JX7jlqP3yMZzEGKk1sdZGB8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "OpenTelemetry.wasm",
+        "name": "OpenTelemetry.thpltxtlsl.wasm",
+        "integrity": "sha256-UeXFIAPspkQWPwvsV4KMITQQ+0kzVF5Xaw3huNVywOQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "OpenTelemetry.Api.wasm",
+        "name": "OpenTelemetry.Api.31v3pvvoe3.wasm",
+        "integrity": "sha256-KbtfNrlK9ZG+G6kfQrPLlTCxuG0Ri0aA+fiVrLTSs5U=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "OpenTelemetry.Api.ProviderBuilderExtensions.wasm",
+        "name": "OpenTelemetry.Api.ProviderBuilderExtensions.0buwafscsg.wasm",
+        "integrity": "sha256-bAck/YwPSwcHbcMwWLK8+RFPvwjeznGxY03Kayr3fB4=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "OpenTelemetry.Exporter.Console.wasm",
+        "name": "OpenTelemetry.Exporter.Console.wobwstrmy3.wasm",
+        "integrity": "sha256-0Jw4ixhzVmW/yGeTxeifsdkbaOCQXThvpxbehCedY8s=",
         "cache": "force-cache"
       },
       {
@@ -1284,16 +1314,16 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "WasmClient.wasm",
-        "name": "WasmClient.leu1hgzzrz.wasm",
-        "integrity": "sha256-LTF460qNjo9rRTaCUeeu3crdD1hBKGiM9vr6XhpArdU=",
+        "name": "WasmClient.ggkms57dfc.wasm",
+        "integrity": "sha256-8G57fmXjkzigi2YMEp/w312Ibbv4IZRWxm2uGmIwFrw=",
         "cache": "force-cache"
       }
     ],
     "pdb": [
       {
         "virtualPath": "WasmClient.pdb",
-        "name": "WasmClient.1eufx3d768.pdb",
-        "integrity": "sha256-Z3tp+tR5qamhJfie4hTvYA0rOvnOphsoPvtnkfJ+5Xg=",
+        "name": "WasmClient.r7w0l2a7nh.pdb",
+        "integrity": "sha256-F4C1QAFifBI+xskW+NxyxLtBDXSLQGgNF79TF93g/GQ=",
         "cache": "force-cache"
       }
     ],

@@ -65,7 +65,7 @@
                                 <hr class="my-3" />
 
                                 <div class="d-grid gap-2">
-                                    <button class="btn btn-primary">
+                                    <button class="btn btn-primary" @onclick="() => BookService(service.Id)">
                                         <i class="bi bi-calendar-plus me-2"></i>
                                         Book Now
                                     </button>
@@ -125,6 +125,11 @@
         {
             isLoading = false;
         }
+    }
+
+    private void BookService(int serviceId)
+    {
+        Navigation.NavigateTo($"/bookings/add?serviceId={serviceId}");
     }
 }
 

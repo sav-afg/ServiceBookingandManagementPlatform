@@ -155,13 +155,16 @@
 </div>
 
 @code {
-    private BookingFormModel formModel = new BookingFormModel
-    {
-        ServiceId = 0,
-        ScheduledStart = DateTime.Now.AddDays(1),
-        ScheduledEnd = DateTime.Now.AddDays(1).AddHours(1),
-        Status = "Pending"
-    };
+[SupplyParameterFromQuery]
+public int? ServiceId { get; set; }
+
+private BookingFormModel formModel = new BookingFormModel
+{
+    ServiceId = 0,
+    ScheduledStart = DateTime.Now.AddDays(1),
+    ScheduledEnd = DateTime.Now.AddDays(1).AddHours(1),
+    Status = "Pending"
+};
 
     private List<ServiceDto>? services;
     private string? errorMessage;
@@ -172,6 +175,12 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadServices();
+        
+        // Pre-select service if provided via query parameter
+        if (ServiceId.HasValue && ServiceId.Value > 0)
+        {
+            formModel.ServiceId = ServiceId.Value;
+        }
     }
 
     private async Task LoadServices()
@@ -242,16 +251,19 @@
                 errorMessage = "Failed to create booking. Please try again.";
             }
         }
+        // Handle specific HTTP errors if needed (e.g., 400 Bad Request, 500 Internal Server Error)
         catch (HttpRequestException ex)
         {
             errorMessage = "Network error occurred. Please check your connection and try again.";
             Console.WriteLine($"Error creating booking: {ex.Message}");
         }
+        // Catch any other unexpected exceptions
         catch (Exception ex)
         {
             errorMessage = "An unexpected error occurred. Please try again.";
             Console.WriteLine($"Error creating booking: {ex.Message}");
         }
+        // Ensure the submitting state is reset in case of any error
         finally
         {
             isSubmitting = false;

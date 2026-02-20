@@ -1,0 +1,807 @@
+@page "/admin"
+@using System.ComponentModel.DataAnnotations
+@using ServiceBookingPlatform.Models.Dtos.Booking
+@using ServiceBookingPlatform.Models.Dtos.Service
+@using WasmClient.Api
+@inject IUserBookingApiClient BookingClient
+@inject IUserServiceApiClient ServiceClient
+@inject ILogger<AdminDashboard> Logger
+@inject NavigationManager Navigation
+
+<PageTitle>Admin Dashboard - Service Booking Platform</PageTitle>
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="page-header mb-4">
+            <h3>
+                <i class="bi bi-speedometer2 me-2"></i>
+                Admin Dashboard
+            </h3>
+            <p class="text-muted mb-0">Manage bookings and services</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs mb-4" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "bookings" ? "active" : "")" 
+                        @onclick="@(() => SetActiveTab("bookings"))" 
+                        type="button">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Bookings Management
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "services" ? "active" : "")" 
+                        @onclick="@(() => SetActiveTab("services"))" 
+                        type="button">
+                    <i class="bi bi-grid-fill me-2"></i>
+                    Services Management
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            @if (activeTab == "bookings")
+            {
+                <!-- Bookings Management Tab -->
+                <div class="tab-pane fade show active">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-funnel me-2"></i>
+                                        Filter Bookings
+                                    </h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" @bind="selectedStatus" @bind:after="FilterBookings">
+                                        <option value="">All Statuses</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (isLoadingBookings)
+                    {
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Loading bookings...</p>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(bookingErrorMessage))
+                    {
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <div>@bookingErrorMessage</div>
+                        </div>
+                    }
+                    else if (filteredBookings == null || filteredBookings.Count == 0)
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-calendar-x" style="font-size: 4rem; color: #dee2e6;"></i>
+                            <h4 class="mt-4 text-muted">No bookings found</h4>
+                            <p class="text-muted">No bookings match the current filter.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Service</th>
+                                        <th>Customer</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in filteredBookings)
+                                    {
+                                        <tr>
+                                            <td>#@booking.Id</td>
+                                            <td>@booking.ServiceName</td>
+                                            <td>
+                                                @booking.LastName<br/>
+                                                <small class="text-muted">@booking.Email</small>
+                                            </td>
+                                            <td>@booking.ScheduledStart.ToString("MMM dd, yyyy hh:mm tt")</td>
+                                            <td>@booking.ScheduledEnd.ToString("MMM dd, yyyy hh:mm tt")</td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusBadgeColor(booking.Status)">
+                                                    @booking.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-sm btn-outline-primary" 
+                                                            @onclick="() => ShowModifyBookingModal(booking)">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" 
+                                                            @onclick="() => ShowDeleteBookingModal(booking)">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-3 text-muted">
+                            <small>
+                                <i class="bi bi-info-circle me-1"></i>
+                                Showing @filteredBookings.Count of @allBookings.Count booking(s)
+                            </small>
+                        </div>
+                    }
+                </div>
+            }
+            else if (activeTab == "services")
+            {
+                <!-- Services Management Tab -->
+                <div class="tab-pane fade show active">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-grid-fill me-2"></i>
+                                    All Services
+                                </h5>
+                                <button class="btn btn-success" @onclick="ShowCreateServiceModal">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Add New Service
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (isLoadingServices)
+                    {
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Loading services...</p>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(serviceErrorMessage))
+                    {
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <div>@serviceErrorMessage</div>
+                        </div>
+                    }
+                    else if (allServices == null || allServices.Count == 0)
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 4rem; color: #dee2e6;"></i>
+                            <h4 class="mt-4 text-muted">No services found</h4>
+                            <p class="text-muted">Add your first service to get started.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row g-4">
+                            @foreach (var service in allServices)
+                            {
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card service-card shadow-sm h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <div class="service-icon">
+                                                    <i class="bi bi-gear-fill text-primary" style="font-size: 2.5rem;"></i>
+                                                </div>
+                                                <span class="badge bg-info">@service.ServiceType</span>
+                                            </div>
+
+                                            <h5 class="card-title">@service.ServiceName</h5>
+                                            <p class="card-text text-muted">@service.ServiceDescription</p>
+
+                                            <hr class="my-3" />
+
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-outline-primary btn-sm" 
+                                                        @onclick="() => ShowEditServiceModal(service)">
+                                                    <i class="bi bi-pencil me-2"></i>
+                                                    Edit
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm" 
+                                                        @onclick="() => ShowDeleteServiceModal(service)">
+                                                    <i class="bi bi-trash me-2"></i>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mt-4 text-muted text-center">
+                            <small>
+                                <i class="bi bi-info-circle me-1"></i>
+                                Showing @allServices.Count service(s)
+                            </small>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modify Booking Modal -->
+@if (showModifyBookingModal && selectedBooking != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil me-2"></i>
+                        Modify Booking #@selectedBooking.Id
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModals"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@modifyBookingForm" OnValidSubmit="HandleModifyBooking">
+                        <DataAnnotationsValidator />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Reason for Modification *</label>
+                            <textarea class="form-control" 
+                                      @bind="modifyBookingForm.Reason" 
+                                      rows="3" 
+                                      placeholder="Explain why you're modifying this booking..."
+                                      required></textarea>
+                            <small class="form-text text-muted">This will be sent to the customer via email.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" @bind="modifyBookingForm.Status">
+                                <option value="Pending">Pending</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Cancelled">Cancelled</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Confirmation Required:</strong> Are you sure you want to modify this booking?
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModals">Cancel</button>
+                            <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                                @if (isSubmitting)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Confirm Modification
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Booking Modal -->
+@if (showDeleteBookingModal && selectedBooking != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-trash me-2"></i>
+                        Delete Booking #@selectedBooking.Id
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModals"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Deletion *</label>
+                        <textarea class="form-control" 
+                                  @bind="deleteReason" 
+                                  rows="3" 
+                                  placeholder="Explain why you're deleting this booking..."
+                                  required></textarea>
+                        <small class="form-text text-muted">This will be sent to the customer via email.</small>
+                    </div>
+
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone. Are you sure you want to delete this booking?
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseModals">Cancel</button>
+                        <button type="button" class="btn btn-danger" @onclick="HandleDeleteBooking" disabled="@isSubmitting">
+                            @if (isSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Confirm Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Create/Edit Service Modal -->
+@if (showServiceModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-@(isEditingService ? "pencil" : "plus-circle") me-2"></i>
+                        @(isEditingService ? "Edit" : "Add New") Service
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModals"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@serviceForm" OnValidSubmit="HandleSaveService">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="alert alert-warning" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Service Name *</label>
+                            <InputText class="form-control" @bind-Value="serviceForm.ServiceName" placeholder="e.g., Home Cleaning" />
+                            <ValidationMessage For="@(() => serviceForm.ServiceName)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Service Type *</label>
+                            <InputText class="form-control" @bind-Value="serviceForm.ServiceType" placeholder="e.g., Cleaning" />
+                            <ValidationMessage For="@(() => serviceForm.ServiceType)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea class="form-control" @bind-Value="serviceForm.ServiceDescription" rows="3" placeholder="Brief description of the service..." />
+                            <ValidationMessage For="@(() => serviceForm.ServiceDescription)" />
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModals">Cancel</button>
+                            <button type="submit" class="btn btn-success" disabled="@isSubmitting">
+                                @if (isSubmitting)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                @(isEditingService ? "Update" : "Create") Service
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Service Modal -->
+@if (showDeleteServiceModal && selectedService != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-trash me-2"></i>
+                        Delete Service
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModals"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Warning:</strong> Are you sure you want to delete "@selectedService.ServiceName"? This action cannot be undone.
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseModals">Cancel</button>
+                        <button type="button" class="btn btn-danger" @onclick="HandleDeleteService" disabled="@isSubmitting">
+                            @if (isSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Confirm Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Success Message Toast -->
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 11000">
+        <div class="toast show" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" @onclick="() => successMessage = null"></button>
+            </div>
+            <div class="toast-body">
+                @successMessage
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    // Tab management
+    private string activeTab = "bookings";
+
+    // Bookings data
+    private List<BookingDto> allBookings = new();
+    private List<BookingDto> filteredBookings = new();
+    private string selectedStatus = "";
+    private bool isLoadingBookings = true;
+    private string? bookingErrorMessage;
+
+    // Services data
+    private List<ServiceDto> allServices = new();
+    private bool isLoadingServices = true;
+    private string? serviceErrorMessage;
+
+    // Modal states
+    private bool showModifyBookingModal = false;
+    private bool showDeleteBookingModal = false;
+    private bool showServiceModal = false;
+    private bool showDeleteServiceModal = false;
+    private bool isEditingService = false;
+
+    // Selected items
+    private BookingDto? selectedBooking;
+    private ServiceDto? selectedService;
+
+    // Form models
+    private ModifyBookingFormModel modifyBookingForm = new();
+    private ServiceFormModel serviceForm = new();
+    private string deleteReason = "";
+
+    // UI states
+    private bool isSubmitting = false;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBookings();
+        await LoadServices();
+    }
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    #region Booking Management
+
+    private async Task LoadBookings()
+    {
+        isLoadingBookings = true;
+        bookingErrorMessage = null;
+
+        try
+        {
+            allBookings = await BookingClient.GetAllBookingsAsync();
+            FilterBookings();
+        }
+        catch (Exception ex)
+        {
+            bookingErrorMessage = "Failed to load bookings. Please try again.";
+            Logger.LogError(ex, "Error loading bookings");
+        }
+        finally
+        {
+            isLoadingBookings = false;
+        }
+    }
+
+    private void FilterBookings()
+    {
+        if (string.IsNullOrEmpty(selectedStatus))
+        {
+            filteredBookings = allBookings;
+        }
+        else
+        {
+            filteredBookings = allBookings.Where(b => b.Status == selectedStatus).ToList();
+        }
+    }
+
+    private void ShowModifyBookingModal(BookingDto booking)
+    {
+        selectedBooking = booking;
+        modifyBookingForm = new ModifyBookingFormModel
+        {
+            Status = booking.Status,
+            Reason = ""
+        };
+        showModifyBookingModal = true;
+    }
+
+    private void ShowDeleteBookingModal(BookingDto booking)
+    {
+        selectedBooking = booking;
+        deleteReason = "";
+        showDeleteBookingModal = true;
+    }
+
+    private async Task HandleModifyBooking()
+    {
+        if (selectedBooking == null || string.IsNullOrWhiteSpace(modifyBookingForm.Reason))
+            return;
+
+        isSubmitting = true;
+
+        try
+        {
+            var updateDto = new UpdateBookingDto
+            {
+                ScheduledStart = selectedBooking.ScheduledStart,
+                ScheduledEnd = selectedBooking.ScheduledEnd,
+                Status = modifyBookingForm.Status
+            };
+
+            await BookingClient.UpdateBookingAsync(selectedBooking.Id, updateDto);
+            
+            // Note: In a real implementation, you would send the reason via email here
+            Logger.LogInformation("Booking #{BookingId} modified. Reason: {Reason}", selectedBooking.Id, modifyBookingForm.Reason);
+
+            successMessage = $"Booking #{selectedBooking.Id} has been modified successfully!";
+            CloseModals();
+            await LoadBookings();
+
+            // Auto-hide success message after 3 seconds
+            _ = Task.Delay(3000).ContinueWith(_ => successMessage = null);
+        }
+        catch (Exception ex)
+        {
+            bookingErrorMessage = "Failed to modify booking. Please try again.";
+            Logger.LogError(ex, "Error modifying booking #{BookingId}", selectedBooking?.Id);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task HandleDeleteBooking()
+    {
+        if (selectedBooking == null || string.IsNullOrWhiteSpace(deleteReason))
+            return;
+
+        isSubmitting = true;
+
+        try
+        {
+            await BookingClient.DeleteBookingAsync(selectedBooking.Id);
+            
+            // Note: In a real implementation, you would send the reason via email here
+            Logger.LogInformation("Booking #{BookingId} deleted. Reason: {Reason}", selectedBooking.Id, deleteReason);
+
+            successMessage = $"Booking #{selectedBooking.Id} has been deleted successfully!";
+            CloseModals();
+            await LoadBookings();
+
+            // Auto-hide success message after 3 seconds
+            _ = Task.Delay(3000).ContinueWith(_ => successMessage = null);
+        }
+        catch (Exception ex)
+        {
+            bookingErrorMessage = "Failed to delete booking. Please try again.";
+            Logger.LogError(ex, "Error deleting booking #{BookingId}", selectedBooking?.Id);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    #endregion
+
+    #region Service Management
+
+    private async Task LoadServices()
+    {
+        isLoadingServices = true;
+        serviceErrorMessage = null;
+
+        try
+        {
+            allServices = await ServiceClient.GetAllServicesAsync();
+        }
+        catch (Exception ex)
+        {
+            serviceErrorMessage = "Failed to load services. Please try again.";
+            Logger.LogError(ex, "Error loading services");
+        }
+        finally
+        {
+            isLoadingServices = false;
+        }
+    }
+
+    private void ShowCreateServiceModal()
+    {
+        isEditingService = false;
+        selectedService = null;
+        serviceForm = new ServiceFormModel();
+        showServiceModal = true;
+    }
+
+    private void ShowEditServiceModal(ServiceDto service)
+    {
+        isEditingService = true;
+        selectedService = service;
+        serviceForm = new ServiceFormModel
+        {
+            ServiceName = service.ServiceName,
+            ServiceType = service.ServiceType,
+            ServiceDescription = service.ServiceDescription
+        };
+        showServiceModal = true;
+    }
+
+    private void ShowDeleteServiceModal(ServiceDto service)
+    {
+        selectedService = service;
+        showDeleteServiceModal = true;
+    }
+
+    private async Task HandleSaveService()
+    {
+        isSubmitting = true;
+
+        try
+        {
+            if (isEditingService && selectedService != null)
+            {
+                // Update existing service
+                var updateDto = new UpdateServiceDto
+                {
+                    ServiceName = serviceForm.ServiceName,
+                    ServiceType = serviceForm.ServiceType,
+                    ServiceDescription = serviceForm.ServiceDescription
+                };
+
+                await ServiceClient.UpdateServiceAsync(selectedService.Id, updateDto);
+                successMessage = $"Service '{serviceForm.ServiceName}' has been updated successfully!";
+            }
+            else
+            {
+                // Create new service
+                var createDto = new CreateServiceDto
+                {
+                    ServiceName = serviceForm.ServiceName,
+                    ServiceType = serviceForm.ServiceType,
+                    ServiceDescription = serviceForm.ServiceDescription
+                };
+
+                await ServiceClient.CreateServiceAsync(createDto);
+                successMessage = $"Service '{serviceForm.ServiceName}' has been created successfully!";
+            }
+
+            CloseModals();
+            await LoadServices();
+
+            // Auto-hide success message after 3 seconds
+            _ = Task.Delay(3000).ContinueWith(_ => successMessage = null);
+        }
+        catch (Exception ex)
+        {
+            serviceErrorMessage = "Failed to save service. Please try again.";
+            Logger.LogError(ex, "Error saving service '{ServiceName}'", serviceForm.ServiceName);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task HandleDeleteService()
+    {
+        if (selectedService == null)
+            return;
+
+        isSubmitting = true;
+
+        try
+        {
+            await ServiceClient.DeleteServiceAsync(selectedService.Id);
+            successMessage = $"Service '{selectedService.ServiceName}' has been deleted successfully!";
+            CloseModals();
+            await LoadServices();
+
+            // Auto-hide success message after 3 seconds
+            _ = Task.Delay(3000).ContinueWith(_ => successMessage = null);
+        }
+        catch (Exception ex)
+        {
+            serviceErrorMessage = "Failed to delete service. Please try again.";
+            Logger.LogError(ex, "Error deleting service '{ServiceName}'", selectedService?.ServiceName);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    #endregion
+
+    #region Helper Methods
+
+    private void CloseModals()
+    {
+        showModifyBookingModal = false;
+        showDeleteBookingModal = false;
+        showServiceModal = false;
+        showDeleteServiceModal = false;
+        selectedBooking = null;
+        selectedService = null;
+        deleteReason = "";
+        isSubmitting = false;
+    }
+
+    private string GetStatusBadgeColor(string status) => status switch
+    {
+        "Pending" => "warning",
+        "Confirmed" => "info",
+        "Completed" => "success",
+        "Cancelled" => "danger",
+        _ => "secondary"
+    };
+
+    #endregion
+
+    #region Form Models
+
+    private class ModifyBookingFormModel
+    {
+        public string Status { get; set; } = "Pending";
+        public string Reason { get; set; } = "";
+    }
+
+    private class ServiceFormModel
+    {
+        [Required(ErrorMessage = "Service name is required")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Service name must be between 2 and 100 characters")]
+        public string ServiceName { get; set; } = "";
+
+        [Required(ErrorMessage = "Service type is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Service type must be between 2 and 50 characters")]
+        public string ServiceType { get; set; } = "";
+
+        [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
+        public string ServiceDescription { get; set; } = "";
+    }
+
+    #endregion
+}

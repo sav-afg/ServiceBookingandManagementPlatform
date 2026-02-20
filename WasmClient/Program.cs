@@ -13,6 +13,11 @@ namespace WasmClient
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+            builder.Logging.ClearProviders();
+
+            builder.Logging.AddOpenTelemetry();
+
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 

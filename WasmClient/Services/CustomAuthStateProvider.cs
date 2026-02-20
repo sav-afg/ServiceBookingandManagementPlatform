@@ -17,9 +17,10 @@ namespace WasmClient.Services
                     new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
+            // If we have a token, we can parse it to extract the claims and create an authenticated user
             try
             {
-                var claims = ParseClaimsFromJwt(token);
+                var claims = ParseClaimsFromJwt(token, logger);
                 var identity = new ClaimsIdentity(claims, "jwt");
                 var user = new ClaimsPrincipal(identity);
                 return new AuthenticationState(user);
@@ -37,11 +38,15 @@ namespace WasmClient.Services
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
-        private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt, ILogger<CustomAuthStateProvider> logger)
         {
             var payload = jwt.Split('.')[1];
             var jsonBytes = ParseBase64WithoutPadding(payload);
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+
+            logger.LogDebug(keyValuePairs != null
+                ? $"Parsed claims from JWT: {string.Join(", ", keyValuePairs.Select(kvp => $"{kvp.Key}={kvp.Value}"))}"
+                : "No claims found in JWT.");
 
             var claims = new List<Claim>();
 
@@ -51,6 +56,11 @@ namespace WasmClient.Services
                 if (kvp.Key == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, kvp.Value.ToString()!));
+                }
+                // Map the name claim to the standard claim type that Blazor expects
+                else if (kvp.Key == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")
+                {
+                    claims.Add(new Claim(ClaimTypes.Name, kvp.Value.ToString()!));
                 }
                 else
                 {
