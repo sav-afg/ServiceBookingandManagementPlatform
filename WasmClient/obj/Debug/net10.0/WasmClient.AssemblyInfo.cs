@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WasmClient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bb3dc5a43345b64b410312848d74b4ba5f4690c7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+07321435f2de5f277378bece8f8e98b31623fe8c")]
 [assembly: System.Reflection.AssemblyProductAttribute("WasmClient")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WasmClient")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
