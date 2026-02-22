@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="../../../C# Projects/Console app/FieldValidatorAPI/FieldValidatorAPI.csproj" />
+  <Project Path="../WasmClient/WasmClient.csproj" Id="0ee5aee4-0f46-47f7-b72f-bd22ecfcb96b" />
+  <Project Path="ServiceBookingPlatformApi.csproj" />
+  <Project Path="UnitTests/UnitTests.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
+</Solution>
