@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "WasmClient",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-5Nh6l8So2jitNdtEW89EEyAGE7QfrN7Tnq3JkUaQkeU=",
+    "hash": "sha256-u4sbGX3riTXrJZ6ZKYMVm1dDK4h5L7IXykRD7eNt1eQ=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.87vtjjdetb.js"
@@ -62,6 +62,30 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
         "virtualPath": "BootstrapBlazor.wasm",
         "name": "BootstrapBlazor.fo4w71oqj9.wasm",
         "integrity": "sha256-r+rnYiEnJmtWaLG5hswzaoqp0DZJ1LVcfnJzRCjSN/I=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Google.Protobuf.wasm",
+        "name": "Google.Protobuf.iv8pr2kqtw.wasm",
+        "integrity": "sha256-Lvx3aWqaGpxBoMR7alifXYNncbLFO1H5PQfbpfNlyPg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Grpc.Core.Api.wasm",
+        "name": "Grpc.Core.Api.kfav08cc26.wasm",
+        "integrity": "sha256-kCb1nOpQkw1MPcHkxccF3n94p5ORijF4BFKNlLr4QnA=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Grpc.Net.Client.wasm",
+        "name": "Grpc.Net.Client.kfhfcdl54h.wasm",
+        "integrity": "sha256-AIqrWXkXdRy/aXoY2xQuTqhXLnzpKkdmjqvuXuu0fP0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Grpc.Net.Common.wasm",
+        "name": "Grpc.Net.Common.5z7bikfjfs.wasm",
+        "integrity": "sha256-3zDm4Nwo28u8ll4MfcUShiGg32bgA2mI3HHjRo53xzw=",
         "cache": "force-cache"
       },
       {
@@ -290,6 +314,42 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
         "virtualPath": "OpenTelemetry.Exporter.Console.wasm",
         "name": "OpenTelemetry.Exporter.Console.wobwstrmy3.wasm",
         "integrity": "sha256-0Jw4ixhzVmW/yGeTxeifsdkbaOCQXThvpxbehCedY8s=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Serilog.wasm",
+        "name": "Serilog.y4koq7nzm1.wasm",
+        "integrity": "sha256-8oGNBQtHTs5INsirtJOzcUhKe5mRhzF3sWa+n7plSBE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Serilog.Extensions.Logging.wasm",
+        "name": "Serilog.Extensions.Logging.4aarm1ia2h.wasm",
+        "integrity": "sha256-NHk6xRS3dIv7nLWuBUZvce3EXz7kvxiBsrjE7KvSMcI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Serilog.Sinks.BrowserConsole.wasm",
+        "name": "Serilog.Sinks.BrowserConsole.x47anjwz3v.wasm",
+        "integrity": "sha256-oaUyoVo2a89AwFRLViIDIdBnhpi17mAo03uxs1QLd2g=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Serilog.Sinks.File.wasm",
+        "name": "Serilog.Sinks.File.5g37eutqen.wasm",
+        "integrity": "sha256-NWMsCoF+R7Mv7Z6BEPXyMs0jCnZVOwXiBCAixBiNJuQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Serilog.Sinks.OpenTelemetry.wasm",
+        "name": "Serilog.Sinks.OpenTelemetry.e325q37sm5.wasm",
+        "integrity": "sha256-2k8gGKWGX905VbDfOzNu4HmhWPb4cDrDpvIs88fTdn0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Serilog.Sinks.Seq.wasm",
+        "name": "Serilog.Sinks.Seq.paaww0y3mi.wasm",
+        "integrity": "sha256-3wNclVuFXprkBdrxDKq0jCp3vVe1Iwjb5U0STE2UMlA=",
         "cache": "force-cache"
       },
       {
@@ -1314,16 +1374,16 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "WasmClient.wasm",
-        "name": "WasmClient.ggkms57dfc.wasm",
-        "integrity": "sha256-8G57fmXjkzigi2YMEp/w312Ibbv4IZRWxm2uGmIwFrw=",
+        "name": "WasmClient.05ko344t9p.wasm",
+        "integrity": "sha256-9G4viZWpUpBqR8Dvf7WV8om/IHxaBzJwnWDIfjdJ204=",
         "cache": "force-cache"
       }
     ],
     "pdb": [
       {
         "virtualPath": "WasmClient.pdb",
-        "name": "WasmClient.r7w0l2a7nh.pdb",
-        "integrity": "sha256-F4C1QAFifBI+xskW+NxyxLtBDXSLQGgNF79TF93g/GQ=",
+        "name": "WasmClient.9iji6m88ku.pdb",
+        "integrity": "sha256-QZHHVTX4dCxHuaw+ImHAPBssKq9YxCW445TpT8UV0fI=",
         "cache": "force-cache"
       }
     ],

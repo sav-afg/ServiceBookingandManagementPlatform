@@ -8,11 +8,12 @@ namespace WasmClient.Services
     {
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-        
+
             var token = await tokenService.GetAccessTokenAsync();
 
             if (string.IsNullOrEmpty(token))
             {
+                logger.LogInformation("No access token found, returning anonymous user");
                 return new AuthenticationState(
                     new ClaimsPrincipal(new ClaimsIdentity()));
             }
@@ -21,8 +22,20 @@ namespace WasmClient.Services
             try
             {
                 var claims = ParseClaimsFromJwt(token, logger);
-                var identity = new ClaimsIdentity(claims, "jwt");
+                var identity = new ClaimsIdentity(
+                        claims,
+                        authenticationType: "jwt",
+                        nameType: ClaimTypes.Name,
+                        roleType: ClaimTypes.Role);
+
                 var user = new ClaimsPrincipal(identity);
+
+                // Log to verify Identity.Name is set
+                logger.LogInformation("User authenticated - Identity.Name: '{IdentityName}', IsAuthenticated: {IsAuthenticated}, Claims Count: {ClaimsCount}",
+                    user.Identity?.Name ?? "(null)",
+                    user.Identity?.IsAuthenticated ?? false,
+                    claims.Count());
+
                 return new AuthenticationState(user);
             }
             catch (Exception ex)
@@ -52,19 +65,24 @@ namespace WasmClient.Services
 
             foreach (var kvp in keyValuePairs!)
             {
-                // Map the role claim to the standard claim type that Blazor expects
-                if (kvp.Key == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+                // Map role claims (both short form and full URI) to ClaimTypes.Role
+                if (kvp.Key == "role" || kvp.Key == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
                 {
                     claims.Add(new Claim(ClaimTypes.Role, kvp.Value.ToString()!));
+                    logger.LogInformation("Mapped Role Claim: {Value}", kvp.Value);
                 }
-                // Map the name claim to the standard claim type that Blazor expects
-                else if (kvp.Key == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")
+                // Map name claims (JWT short form, standard claim, and full URI) to ClaimTypes.Name
+                else if (kvp.Key == "unique_name" || 
+                         kvp.Key == "name" || 
+                         kvp.Key == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")
                 {
                     claims.Add(new Claim(ClaimTypes.Name, kvp.Value.ToString()!));
+                    logger.LogInformation("Mapped Name Claim: {Value}", kvp.Value);
                 }
                 else
                 {
                     claims.Add(new Claim(kvp.Key, kvp.Value.ToString()!));
+                    logger.LogInformation("Added Claim - Type: {Type}, Value: {Value}", kvp.Key, kvp.Value);
                 }
             }
 
