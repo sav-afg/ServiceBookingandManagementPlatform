@@ -117,7 +117,7 @@ ServiceBookingandManagementPlatform/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
@@ -798,3 +798,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 **Built using .NET 10, Blazor WebAssembly, and industry best practices**
+
