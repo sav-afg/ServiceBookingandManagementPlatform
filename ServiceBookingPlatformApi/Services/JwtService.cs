@@ -35,6 +35,7 @@ namespace ServiceBookingPlatform.Services
             if (oldTokens.Count != 0)
             {
                 Db.RefreshTokens.RemoveRange(oldTokens);
+                logger.LogDebug("{Count} old/expired refresh tokens removed for user {Email}", oldTokens.Count, user.Email);
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -43,7 +44,7 @@ namespace ServiceBookingPlatform.Services
                 [
                     new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, request.Email),
-                    new Claim(ClaimTypes.Name, user.FirstName),
+                    new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
                     new Claim(ClaimTypes.Role, user.Role.ToString())
                 ]),
                 Expires = tokenExpiryTimeStamp,
@@ -56,7 +57,7 @@ namespace ServiceBookingPlatform.Services
             // Log claims for debugging
             foreach (var claim in tokenDescriptor.Subject.Claims)
             {
-                logger.LogInformation("Claim Type: {ClaimType}, Claim Value: {ClaimValue}", claim.Type, claim.Value);
+                logger.LogDebug("Claim Type: {ClaimType}, Claim Value: {ClaimValue}", claim.Type, claim.Value);
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();

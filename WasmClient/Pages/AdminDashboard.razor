@@ -1,8 +1,10 @@
 @page "/admin"
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
 @using ServiceBookingPlatform.Models.Dtos.Booking
 @using ServiceBookingPlatform.Models.Dtos.Service
 @using WasmClient.Api
+@attribute [Authorize(Roles="Admin")]
 @inject IUserBookingApiClient BookingClient
 @inject IUserServiceApiClient ServiceClient
 @inject ILogger<AdminDashboard> Logger

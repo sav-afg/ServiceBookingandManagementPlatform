@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BOOTSTRAP_STYLING.md" />
+    <None Remove="ERROR_TROUBLESHOOTING.md" />
+    <None Remove="IMPLEMENTATION_SUMMARY.md" />
+    <None Remove="NEW_PAGES_IMPLEMENTATION.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.3.8" />
     <PackageReference Include="BootstrapBlazor" Version="10.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.2" />

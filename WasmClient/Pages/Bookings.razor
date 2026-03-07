@@ -7,6 +7,7 @@
 @using WasmClient.Services
 @inject IUserBookingApiClient BookingClient
 @inject IJSInteropService JSInterop
+@inject ILogger<Bookings> Logger
 @inject NavigationManager Navigation
 
 <PageTitle>My Bookings - Service Booking Platform</PageTitle>
@@ -102,15 +103,12 @@
                                 <div class="btn-group w-100" role="group">
                                     <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewBooking(booking.Id)">
                                         <i class="bi bi-eye"></i>
-
                                     </button>
                                     <button class="btn btn-sm btn-outline-warning" @onclick="() => EditBooking(booking.Id)">
                                         <i class="bi bi-pencil"></i>
-                                        
                                     </button>
                                     <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteBooking(booking.Id)">
                                         <i class="bi bi-trash"></i>
-                                        
                                     </button>
                                 </div>
                             </div>
@@ -152,7 +150,7 @@
         catch (Exception ex)
         {
             errorMessage = "Failed to load bookings. Please try again.";
-            Console.WriteLine($"Error loading bookings: {ex.Message}");
+            Logger.LogError("Error loading bookings: {Message}", ex.Message);
         }
         finally
         {
@@ -185,16 +183,16 @@
         {
             isLoading = true;
             errorMessage = null;
-            
+
             try
             {
                 await BookingClient.DeleteBookingAsync(id);
-                await LoadBookings(); // Reload the list
+                await LoadBookings();
             }
             catch (Exception ex)
             {
                 errorMessage = "Failed to delete booking. Please try again.";
-                Console.WriteLine($"Error deleting booking: {ex.Message}");
+                Logger.LogError("Error deleting booking #{BookingId}: {Message}", id, ex.Message);
                 isLoading = false;
             }
         }

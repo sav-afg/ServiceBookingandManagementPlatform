@@ -8,6 +8,7 @@
 @using WasmClient.Api
 @inject IUserBookingApiClient BookingClient
 @inject IUserServiceApiClient ServiceClient
+@inject ILogger<AddBooking> Logger
 @inject NavigationManager Navigation
 
 <PageTitle>Add New Booking - Service Booking Platform</PageTitle>
@@ -192,10 +193,15 @@ private BookingFormModel formModel = new BookingFormModel
         {
             services = await ServiceClient.GetAllServicesAsync();
         }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = "Failed to load services. Please try again.";
+            Logger.LogError("LoadServices: Failed with status {StatusCode}", (int?)ex.StatusCode);
+        }
         catch (Exception ex)
         {
             errorMessage = "Failed to load services. Please try again.";
-            Console.WriteLine($"Error loading services: {ex.Message}");
+            Logger.LogError("LoadServices: Unexpected error. {Message}", ex.Message);
         }
         finally
         {
@@ -255,13 +261,13 @@ private BookingFormModel formModel = new BookingFormModel
         catch (HttpRequestException ex)
         {
             errorMessage = "Network error occurred. Please check your connection and try again.";
-            Console.WriteLine($"Error creating booking: {ex.Message}");
+            Logger.LogError("HandleSubmit: HTTP error with status {StatusCode}", (int?)ex.StatusCode);
         }
         // Catch any other unexpected exceptions
         catch (Exception ex)
         {
             errorMessage = "An unexpected error occurred. Please try again.";
-            Console.WriteLine($"Error creating booking: {ex.Message}");
+            Logger.LogError("HandleSubmit: Unexpected error. {Message}", ex.Message);
         }
         // Ensure the submitting state is reset in case of any error
         finally

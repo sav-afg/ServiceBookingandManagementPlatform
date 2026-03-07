@@ -1,5 +1,4 @@
 using ServiceBookingPlatform.Models.Dtos.Booking;
-using System.Net.Http.Json;
 
 namespace WasmClient.Api
 {
@@ -26,33 +25,10 @@ namespace WasmClient.Api
                 ?? throw new InvalidOperationException("Booking creation failed");
 
         public async Task<BookingDto> UpdateBookingAsync(int id, UpdateBookingDto booking)
-        {
-            try
-            {
-                var response = await httpClient.PutAsJsonAsync($"api/userbooking/{id}", booking);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<BookingDto>()
-                    ?? throw new InvalidOperationException("Booking update failed");
-            }
-            catch (HttpRequestException ex)
-            {
-                logger.LogError(ex, "PUT request failed: api/userbooking/{Id}", id);
-                throw;
-            }
-        }
+            => await PatchAsync<UpdateBookingDto, BookingDto>($"api/userbooking/{id}", booking)
+                ?? throw new InvalidOperationException("Booking update failed");
 
         public async Task DeleteBookingAsync(int id)
-        {
-            try
-            {
-                var response = await httpClient.DeleteAsync($"api/userbooking/{id}");
-                response.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException ex)
-            {
-                logger.LogError(ex, "DELETE request failed: api/userbooking/{Id}", id);
-                throw;
-            }
-        }
+            => await DeleteAsync($"api/userbooking/{id}");
     }
 }

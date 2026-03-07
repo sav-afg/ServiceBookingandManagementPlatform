@@ -9,12 +9,12 @@ namespace ServiceBookingPlatform.Services
 {
     public class UserBookingService(AppDbContext Db) : IUserBookingService
     {
-        private IQueryable<BookingDto> GetBookingQuery()
+        private async Task<BookingDto?> GetBookingDtoByIdAsync(int bookingId)
         {
-            return Db.Bookings
+            return await Db.Bookings
                 .Include(b => b.User)
                 .Include(b => b.Service)
-                .Where(b => b.User != null && b.Service != null)
+                .Where(b => b.Id == bookingId && b.User != null && b.Service != null)
                 .Select(b => new BookingDto(
                     b.Id,
                     b.ScheduledStart,
@@ -23,13 +23,8 @@ namespace ServiceBookingPlatform.Services
                     b.User!.LastName,
                     b.User.Email,
                     b.Service!.ServiceName
-                ));
-        }
-
-        private async Task<BookingDto?> GetBookingDtoByIdAsync(int bookingId)
-        {
-            return await GetBookingQuery()
-                .FirstOrDefaultAsync(b => b.Id == bookingId);
+                ))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<List<BookingDto>> GetAllBookingsAsync(ClaimsPrincipal user)
@@ -77,10 +72,7 @@ namespace ServiceBookingPlatform.Services
             if (role == "Customer" && booking.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have permission to access this booking.");
 
-            var bookingDto = await GetBookingQuery()
-                .FirstOrDefaultAsync(b => b.Id == bookingId);
-
-            return bookingDto;
+            return await GetBookingDtoByIdAsync(bookingId);
         }
 
         public async Task<Result<BookingDto?>> CreateBookingAsync(int userId, CreateBookingDto newBooking)
