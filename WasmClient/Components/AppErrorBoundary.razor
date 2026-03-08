@@ -1,11 +1,13 @@
 @using Microsoft.AspNetCore.Components.Web
+@inject ILogger<AppErrorBoundary> Logger
 
 <CascadingValue Value="this">
     <ErrorBoundary @ref="errorBoundary">
         <ChildContent>
             @ChildContent
         </ChildContent>
-        <ErrorContent Context="exception">
+        <ErrorContent Context="exception" >
+            @{ LogException(exception); }
             <div class="alert alert-danger m-3" role="alert">
                 <h4 class="alert-heading">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -33,14 +35,27 @@
     public RenderFragment? ChildContent { get; set; }
 
     private ErrorBoundary? errorBoundary;
+    private Exception? _lastLoggedException;
+
+    // This method ensures that we don't log the same exception multiple times if the user clicks "Try Again" without refreshing the page.
+    private void LogException(Exception exception)
+    {
+        if (_lastLoggedException == exception)
+            return;
+
+        _lastLoggedException = exception;
+        Logger.LogError(exception, "An unhandled UI exception occurred: {Message}", exception.Message);
+    }
 
     private void Recover()
     {
+        _lastLoggedException = null;
         errorBoundary?.Recover();
     }
 
     public void Reset()
     {
+        _lastLoggedException = null;
         errorBoundary?.Recover();
     }
 }

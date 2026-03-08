@@ -2,6 +2,7 @@
 {
     public record BookingDto(
         int Id,
+        Guid PublicId,
         DateTime ScheduledStart,
         DateTime ScheduledEnd,
         string Status,

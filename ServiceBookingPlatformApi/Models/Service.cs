@@ -7,7 +7,6 @@ namespace ServiceBookingPlatform.Models
     {
         [Key]
         public int Id { get; set; }
-
         [Required]
         [MaxLength(100)]
         public required string ServiceName { get; set; }

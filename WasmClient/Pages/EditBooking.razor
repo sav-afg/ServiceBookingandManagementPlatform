@@ -1,0 +1,337 @@
+@page "/bookings/edit/{PublicId:guid}"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@using ServiceBookingPlatform.Models.Dtos.Booking
+@using WasmClient.Api
+@inject IUserBookingApiClient BookingClient
+@inject ILogger<EditBooking> Logger
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Booking - Service Booking Platform</PageTitle>
+
+<div class="page-content">
+    <div class="container">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3>
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Booking 
+                    </h3>
+                    <p class="text-muted mb-0">Update your booking details</p>
+                </div>
+                <button class="btn btn-outline-secondary" @onclick="Cancel">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    Back to Bookings
+                </button>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="loading-container">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading booking...</p>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(loadError))
+        {
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <div>@loadError</div>
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+
+                    @if (originalBooking != null)
+                    {
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0 text-muted">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Current Booking Info
+                                </h6>
+                            </div>
+                            <div class="card-body py-2">
+                                <div class="row">
+                                    <div class="col-sm-4 text-muted">Service</div>
+                                    <div class="col-sm-8"><strong>@originalBooking.ServiceName</strong></div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-sm-4 text-muted">Customer</div>
+                                    <div class="col-sm-8">@originalBooking.LastName — @originalBooking.Email</div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-sm-4 text-muted">Start</div>
+                                    <div class="col-sm-8">@originalBooking.ScheduledStart.ToString("MMM dd, yyyy hh:mm tt")</div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-sm-4 text-muted">End</div>
+                                    <div class="col-sm-8">@originalBooking.ScheduledEnd.ToString("MMM dd, yyyy hh:mm tt")</div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-sm-4 text-muted">Status</div>
+                                    <div class="col-sm-8">
+                                        <span class="badge bg-@GetStatusBadgeColor(originalBooking.Status)">@originalBooking.Status</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                Update Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+
+                            @if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    @errorMessage
+                                    <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(successMessage))
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    @successMessage
+                                    <button type="button" class="btn-close" @onclick="@(() => successMessage = null)"></button>
+                                </div>
+                            }
+
+                            <EditForm Model="@formModel" OnValidSubmit="@HandleSubmit">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="alert alert-warning" />
+
+                                <div class="mb-3">
+                                    <label for="scheduledStart" class="form-label">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        Start Date &amp; Time *
+                                    </label>
+                                    <InputDate Type="InputDateType.DateTimeLocal" id="scheduledStart" class="form-control" @bind-Value="formModel.ScheduledStart" />
+                                    <ValidationMessage For="@(() => formModel.ScheduledStart)" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="scheduledEnd" class="form-label">
+                                        <i class="bi bi-calendar-event-fill me-1"></i>
+                                        End Date &amp; Time *
+                                    </label>
+                                    <InputDate Type="InputDateType.DateTimeLocal" id="scheduledEnd" class="form-control" @bind-Value="formModel.ScheduledEnd" />
+                                    <ValidationMessage For="@(() => formModel.ScheduledEnd)" />
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="status" class="form-label">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Status *
+                                    </label>
+                                    <InputSelect id="status" class="form-select" @bind-Value="formModel.Status">
+                                        <option value="Pending">Pending</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Completed">Completed</option>
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => formModel.Status)" />
+                                </div>
+
+                                <hr class="my-4" />
+
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-outline-secondary" @onclick="Cancel">
+                                        <i class="bi bi-x-circle me-2"></i>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                                        @if (isSubmitting)
+                                        {
+                                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            <span>Saving...</span>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            <span>Save Changes</span>
+                                        }
+                                    </button>
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid PublicId { get; set; }
+
+    private BookingFormModel formModel = new();
+    private BookingDto? originalBooking;
+    private string? loadError;
+    private string? errorMessage;
+    private string? successMessage;
+    private bool isLoading = true;
+    private bool isSubmitting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBooking();
+    }
+
+    private async Task LoadBooking()
+    {
+        isLoading = true;
+        loadError = null;
+
+        try
+        {
+            originalBooking = await BookingClient.GetBookingByIdAsync(PublicId);
+
+            if (originalBooking is null)
+            {
+                Logger.LogWarning("EditBooking: Booking {BookingId} not found", PublicId);
+                loadError = $"Booking #{PublicId} was not found.";
+                return;
+            }
+
+            formModel = new BookingFormModel
+            {
+                ScheduledStart = originalBooking.ScheduledStart,
+                ScheduledEnd = originalBooking.ScheduledEnd,
+                Status = originalBooking.Status
+            };
+
+            Logger.LogDebug("EditBooking: Loaded booking {BookingId} for editing", PublicId);
+        }
+        catch (HttpRequestException ex)
+        {
+            loadError = "Failed to load booking. Please try again.";
+            Logger.LogError("EditBooking: LoadBooking failed with status {StatusCode}", (int?)ex.StatusCode);
+        }
+        catch (Exception ex)
+        {
+            loadError = "An unexpected error occurred while loading the booking.";
+            Logger.LogError("EditBooking: LoadBooking unexpected error. {Message}", ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+        successMessage = null;
+
+        // Client-side validation mirroring server rules
+        if (formModel.ScheduledEnd <= formModel.ScheduledStart)
+        {
+            errorMessage = "End time must be after start time.";
+            isSubmitting = false;
+            return;
+        }
+
+        if (formModel.ScheduledStart < DateTime.Now)
+        {
+            errorMessage = "Start time must be in the future.";
+            isSubmitting = false;
+            return;
+        }
+
+        if ((formModel.ScheduledEnd - formModel.ScheduledStart).TotalHours > 8)
+        {
+            errorMessage = "Booking duration cannot exceed 8 hours.";
+            isSubmitting = false;
+            return;
+        }
+
+        try
+        {
+            var dto = new UpdateBookingDto
+            {
+                ScheduledStart = formModel.ScheduledStart,
+                ScheduledEnd = formModel.ScheduledEnd,
+                Status = formModel.Status
+            };
+
+            await BookingClient.UpdateBookingAsync(PublicId, dto);
+
+            Logger.LogDebug("EditBooking: Booking {BookingId} updated successfully", PublicId);
+
+            successMessage = "Booking updated successfully!";
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/bookings");
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            // Server returned its validation message — show it directly
+            errorMessage = ex.Message;
+            Logger.LogWarning("EditBooking: Validation rejected for booking {BookingId}. {Message}", PublicId, ex.Message);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            errorMessage = "You do not have permission to update this booking.";
+            Logger.LogWarning("EditBooking: Unauthorized update attempt for booking {BookingId}", PublicId);
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = "Network error occurred. Please check your connection and try again.";
+            Logger.LogError("EditBooking: HTTP error updating booking {BookingId} with status {StatusCode}", PublicId, (int?)ex.StatusCode);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An unexpected error occurred. Please try again.";
+            Logger.LogError("EditBooking: Unexpected error updating booking {BookingId}. {Message}", PublicId, ex.Message);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/bookings");
+    }
+
+    private static string GetStatusBadgeColor(string status) => status?.ToLower() switch
+    {
+        "pending" => "pending",
+        "confirmed" => "confirmed",
+        "cancelled" => "cancelled",
+        "completed" => "completed",
+        _ => "secondary"
+    };
+
+    private class BookingFormModel
+    {
+        [Required(ErrorMessage = "Start date and time is required.")]
+        public DateTime ScheduledStart { get; set; }
+
+        [Required(ErrorMessage = "End date and time is required.")]
+        public DateTime ScheduledEnd { get; set; }
+
+        [Required(ErrorMessage = "Status is required.")]
+        public string Status { get; set; } = "Pending";
+    }
+}

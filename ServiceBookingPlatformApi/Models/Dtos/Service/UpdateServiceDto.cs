@@ -12,5 +12,6 @@ namespace ServiceBookingPlatform.Models.Dtos.Service
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
         public string? ServiceDescription { get; init; }
+        
     }
 }

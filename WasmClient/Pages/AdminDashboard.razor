@@ -572,7 +572,7 @@
                 Status = modifyBookingForm.Status
             };
 
-            await BookingClient.UpdateBookingAsync(selectedBooking.Id, updateDto);
+            await BookingClient.UpdateBookingAsync(selectedBooking.PublicId, updateDto);
             
             // Note: In a real implementation, you would send the reason via email here
             Logger.LogInformation("Booking #{BookingId} modified. Reason: {Reason}", selectedBooking.Id, modifyBookingForm.Reason);
@@ -604,7 +604,7 @@
 
         try
         {
-            await BookingClient.DeleteBookingAsync(selectedBooking.Id);
+            await BookingClient.DeleteBookingAsync(selectedBooking.PublicId);
             
             // Note: In a real implementation, you would send the reason via email here
             Logger.LogInformation("Booking #{BookingId} deleted. Reason: {Reason}", selectedBooking.Id, deleteReason);

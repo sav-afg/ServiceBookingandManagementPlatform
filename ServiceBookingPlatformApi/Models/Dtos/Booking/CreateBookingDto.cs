@@ -6,6 +6,7 @@ namespace ServiceBookingPlatform.Models.Dtos.Booking
     {
         [Required(ErrorMessage = "Booking must be associated with a service.")]
         public required int ServiceId { get; init; }
+        public Guid PublicId { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "Booking must have a scheduled start time.")]
         public required DateTime ScheduledStart { get; init; }

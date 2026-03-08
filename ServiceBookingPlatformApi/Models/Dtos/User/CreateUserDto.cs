@@ -23,5 +23,6 @@ namespace ServiceBookingPlatform.Models.Dtos.User
 
         [Required(ErrorMessage = "Phone number is required")]
         public required string PhoneNumber { get; init; }
+        
     }
 }

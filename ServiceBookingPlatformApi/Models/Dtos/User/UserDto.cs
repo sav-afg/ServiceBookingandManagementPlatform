@@ -23,5 +23,6 @@ namespace ServiceBookingPlatform.Models.Dtos.User
 
         [Required(ErrorMessage = "User must have a role")]
         public required string Role { get; init; }
+        
     }
 }

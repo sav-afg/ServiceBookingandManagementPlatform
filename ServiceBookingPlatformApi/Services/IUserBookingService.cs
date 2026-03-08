@@ -8,12 +8,12 @@ namespace ServiceBookingPlatform.Services
     {
         Task<List<BookingDto>> GetAllBookingsAsync(ClaimsPrincipal user);
 
-        Task<BookingDto?> GetBookingByIdAsync(int bookingId, ClaimsPrincipal user);
+        Task<BookingDto?> GetBookingByIdAsync(Guid publicId, ClaimsPrincipal user);
 
         Task<Result<BookingDto?>> CreateBookingAsync(int userId, CreateBookingDto newBooking);
 
-        Task<Result<BookingDto?>> UpdateBookingAsync(int bookingId, UpdateBookingDto updatedBooking, ClaimsPrincipal user);
+        Task<Result<BookingDto?>> UpdateBookingAsync(Guid publicId, UpdateBookingDto updatedBooking, ClaimsPrincipal user);
 
-        Task<bool> DeleteBookingAsync(int bookingId, ClaimsPrincipal user);
+        Task<bool> DeleteBookingAsync(Guid publicId, ClaimsPrincipal user);
     }
 }

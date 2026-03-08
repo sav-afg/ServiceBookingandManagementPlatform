@@ -40,7 +40,7 @@ namespace ServiceBookingPlatform.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookingDto>> GetBookingById(int id)
+        public async Task<ActionResult<BookingDto>> GetBookingById(Guid id)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace ServiceBookingPlatform.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<BookingDto>> UpdateBooking(int id, UpdateBookingDto booking)
+        public async Task<ActionResult<BookingDto>> UpdateBooking(Guid id, UpdateBookingDto booking)
         {
             var result = await service.UpdateBookingAsync(id, booking, User);
 
@@ -127,7 +127,7 @@ namespace ServiceBookingPlatform.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteBooking(int id)
+        public async Task<ActionResult> DeleteBooking(Guid id)
         {
             try
             {
